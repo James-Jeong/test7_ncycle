@@ -16,8 +16,8 @@
 
 /**
  * @fn int checkNumberIs2digit(int value)
- * @brief 숫자 자리수가 2 인지 검사하는 함수
- * @param value 자리수를 검사할 숫자
+ * @brief 정수 자리수가 2 인지 검사하는 함수
+ * @param value 자리수를 검사할 정수
  * @return 두 자리수이면 YES, 아니면 NO 반환 
  */
 int checkNumberIs2digit(int value)
@@ -28,13 +28,19 @@ int checkNumberIs2digit(int value)
 
 /**
  * @fn void makeNumber2digits(char *buf, int value)
- * @brief 두 자리수 숫자를 문자열로 변환하는 함수
+ * @brief 두 자리수 정수를 문자열로 변환하는 함수
  * @param buf 문자열을 저장하는 버퍼
- * @param value 최대 두 자리의 숫자
+ * @param value 최대 두 자리의 정수
  * @return 반환값 없음
  */
 void makeNumber2digits(char *buf, int value)
 {
+	if(buf == NULL)
+	{
+		printf("buf is NULL\n");
+		return;
+	}
+
 	buf[0] = '\0';
 	if(checkNumberIs2digit(value) == YES)
 	{
@@ -43,13 +49,62 @@ void makeNumber2digits(char *buf, int value)
 	else sprintf(buf, "0%d", value);
 }
 
+/**
+ * @fn void calculateNCycle(int value)
+ * @brief 정수의 자리수 덧셈 싸이클을 계산하는 함수
+ * @param value 최대 두 자리의 정수
+ * @return 반환값 없음
+ */
+void calculateNCycle(int value)
+{
+	int initialValue = value;
+	int cycleCount = 0;
+	int sumOfDigits = 0;
+	int concatOfRightDigits = 0;
+
+	char initialArray[2];
+	char firstDigitSum[2];
+	char secondDigitSum[2];
+
+	while(1){
+		makeNumber2digits(initialArray, initialValue);
+
+		sumOfDigits = (initialArray[0] - '0') + (initialArray[1] - '0');
+		printf("(%d) + (%d) = %d(a)\n", (initialArray[0] - '0'), (initialArray[1] - '0'), sumOfDigits);
+
+		makeNumber2digits(firstDigitSum, sumOfDigits);
+
+		secondDigitSum[0] = initialArray[1];
+		secondDigitSum[1] = firstDigitSum[1];
+		secondDigitSum[2] ='\0';
+
+		concatOfRightDigits = atoi(secondDigitSum);
+		printf("%d(b)\n", concatOfRightDigits);
+
+		cycleCount++;
+
+		if(concatOfRightDigits != value)
+		{
+			printf("Not equal, restart\n");
+			initialValue = concatOfRightDigits;
+		}
+		else
+		{
+			printf("Equal! : %d == %d\n", value, concatOfRightDigits);
+			break;
+		}
+	}
+
+	printf("\n%d\n", cycleCount);
+}
+
 /////////////////////////////////////////////////////////
 // Main function
 /////////////////////////////////////////////////////////
 
 /**
  * @fn void main()
- * @brief 메인 함수
+ * @brief 메인 함수. 정수의 자리수 덧셈 싸이클을 계산하는 프로그램
  * @return 반환값 없음
  */
 void main()
@@ -57,7 +112,6 @@ void main()
 	int checkInputIsNumber = NO;
 	int value = 0;
 
-	// input_number
 	while(1){
 		printf("입력(0~99) : ");
 		checkInputIsNumber = scanf(" %d", &value);
@@ -74,44 +128,6 @@ void main()
 		break;
 	}
 
-	// caculate
-	int tempValue = value;
-	int cycleCount = 0;
-	int sumOfDigits = 0;
-	int concatOfRightDigits = 0;
-
-	char firstInput[2];
-	char firstDigitSum[2];
-	char secondDigitSum[2];
-
-	while(1){
-		makeNumber2digits(firstInput, tempValue);
-
-		sumOfDigits = (firstInput[0] - '0') + (firstInput[1] - '0');
-		printf("(%d) + (%d) = %d(a)\n", (firstInput[0] - '0'), (firstInput[1] - '0'), sumOfDigits);
-
-		makeNumber2digits(firstDigitSum, sumOfDigits);
-
-		secondDigitSum[0] = firstInput[1];
-		secondDigitSum[1] = firstDigitSum[1];
-
-		concatOfRightDigits = atoi(secondDigitSum);
-		printf("%d(b)\n", concatOfRightDigits);
-
-		cycleCount++;
-
-		if(concatOfRightDigits != value)
-		{
-			printf("Not equal, restart\n");
-			tempValue = concatOfRightDigits;
-		}
-		else
-		{
-			printf("Equal! : %d == %d\n", value, concatOfRightDigits);
-			break;
-		}
-	}
-
-	printf("\n%d\n", cycleCount);
+	calculateNCycle(value);
 }
 
